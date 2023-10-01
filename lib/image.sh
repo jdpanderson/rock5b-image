@@ -49,6 +49,10 @@ image_write() {
 	sudo losetup -d ${LOOP}
 }
 
+image_clean() {
+	rm ${BUILD}/system.img
+}
+
 # Data from raxda build's partitions.sh
 #+ LOADER1_SIZE=8000
 #+ RESERVED1_SIZE=128

@@ -27,5 +27,8 @@ linux_build() {
 }
 
 linux_clean() {
-	echo "no clean yet"
+	pushd ${BUILD}/linux
+	make clean
+	rm -r ${BUILD}/boot
+	popd
 }

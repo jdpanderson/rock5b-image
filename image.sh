@@ -24,6 +24,10 @@ elif [ "$1" == "uboot" ]; then
 elif [ "$1" == "image" ]; then
 	image_source
 	image_build
+elif [ "$1" == "clean" ]; then
+	linux_clean
+	uboot_clean
+	image_clean
 else
 	linux_source
 	linux_build
