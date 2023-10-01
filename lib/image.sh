@@ -35,7 +35,7 @@ image_write() {
 	sudo losetup -P ${LOOP} ${BUILD}/system.img
 	sudo mkfs.vfat ${LOOP}p1
 	sudo mkfs.ext4 ${LOOP}p2
-	UUID=$(sudo blkid -s UUID -o value ${LOOP}p2)
+	UUID=$(sudo blkid -s PARTUUID -o value ${LOOP}p2)
 	mkdir -p ${BUILD}/boot/extlinux
 	sed -e "s/ root=PARTUUID=614e0000-00 / root=PARTUUID=${UUID} /" < extlinux.conf > ${BUILD}/boot/extlinux/extlinux.conf
 	mkdir -p ${BUILD}/root
