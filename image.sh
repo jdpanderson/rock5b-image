@@ -6,15 +6,16 @@ source lib/vars.sh
 source lib/linux.sh
 source lib/uboot.sh
 source lib/rkbin.sh
+source lib/image.sh
 
-if [ "$1" -eq "source" ]; then
+if [ "$1" == "source" ]; then
 	linux_source
 	rkbin_source
 	uboot_source
-elif [ "$1" -eq "linux" ]; then
+elif [ "$1" == "linux" ]; then
 	linux_source
 	linux_build
-elif [ "$1" -eq "uboot" ]; then
+elif [ "$1" == "uboot" ]; then
 	rkbin_source
 	uboot_source
 	uboot_build
@@ -25,4 +26,6 @@ else
 	rkbin_source
 	uboot_source
 	uboot_build
+
+	image_build
 fi

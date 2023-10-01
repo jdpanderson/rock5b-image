@@ -1,33 +1,10 @@
 #!/bin/bash -ex
 
-ORIGIN=https://gitlab.collabora.com/hardware-enablement/rockchip-3588/u-boot.git
-BRANCH=2023.10-rc1-rk3588
-
-CROSS_COMPILE=aarch64-linux-gnu-
-ARCH=arm64
+UBOOT_ORIGIN=https://gitlab.collabora.com/hardware-enablement/rockchip-3588/u-boot.git
+UBOOT_BRANCH=2023.10-rc1-rk3588
 
 uboot_source() {
-	git_source uboot ${ORIGIN} ${BRANCH}
-#	if [ -d ${BUILD}/uboot ]; then
-#		return
-#	fi
-#	mkdir -p ${BUILD}
-#	pushd ${BUILD}
-#	git submodule add ${ORIGIN} uboot
-#	pushd uboot
-#	git checkout origin/${BRANCH}
-#	popd
-#	popd
-}
-
-uboot_bin() {
-	if [ -d ${BUILD}/rkbin ]; then
-		return
-	fi
-	mkdir -p ${BUILD}
-	pushd ${BUILD}
-	git submodule add ${RKBIN_ORIGIN} rkbin
-	popd
+	source_git uboot ${UBOOT_ORIGIN} ${UBOOT_BRANCH}
 }
 
 uboot_build() {
@@ -35,7 +12,9 @@ uboot_build() {
 	export ROCKCHIP_TPL=$(ls -1 ../rkbin/bin/rk35/rk3588_ddr_lp4_2112MHz_lp5_2736MHz_v1.[0-9][0-9].bin)
 	export BL31=$(ls -1 ../rkbin/bin/rk35/rk3588_bl31_v1.[0-9][0-9].elf)
 	CROSS_COMPILE=${CROSS_COMPILE} make rock5b-rk3588_defconfig
-	CROSS_COMPILE=${CROSS_COMPILE} make
+	CROSS_COMPILE=${CROSS_COMPILE} make -j$(($(nproc) + 1))
+	mkdir -p ${BUILD}/boot/extlinux
+	cp ${DIR}/extlinux.conf ${BUILD}/boot/extlinux/
 	popd
 }
 

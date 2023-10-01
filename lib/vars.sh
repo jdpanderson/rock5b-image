@@ -4,6 +4,9 @@ DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../" &> /dev/null && pwd)
 TOP=$(dirname $DIR)
 BUILD=${DIR}/build
 
+CROSS_COMPILE=aarch64-linux-gnu-
+ARCH=arm64
+
 source_git() {
 	PROJECT=$1
 	ORIGIN=$2
@@ -15,7 +18,7 @@ source_git() {
         else
                 mkdir -p ${BUILD}
                 pushd ${BUILD}
-                git checkout --depth 1 --branch ${BRANCH} ${ORIGIN} ${PROJECT}
+                git clone --depth 1 --branch ${BRANCH} ${ORIGIN} ${PROJECT}
                 popd
         fi
 }

@@ -5,24 +5,14 @@
 #PANTHOR=https://gitlab.freedesktop.org/bbrezillon/linux.git
 #PANTHOR_BRANCH=panthor-debug
 
-ORIGIN=https://github.com/jdpanderson/linux.git
-BRANCH=rock5b-panthor
-
-CROSS_COMPILE=aarch64-linux-gnu-
-ARCH=arm64
+LINUX_ORIGIN=https://github.com/jdpanderson/linux.git
+LINUX_BRANCH=rock5b-panthor
+LINUX_IMAGE=arch/arm64/boot/Image
+# Really an RK3588 DTB, but naming consistency
+LINUX_DTB=arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtb
 
 linux_source() {
-	git_source linux ${ORIGIN} ${BRANCH}
-#	if [ -d ${BUILD}/linux ]; then
-#		pushd ${BUILD}/linux
-#		git pull
-#		popd
-#	else
-#		mkdir -p ${BUILD}
-#		pushd ${BUILD}
-#		git checkout --depth 1 --branch ${BRANCH} ${ORIGIN} linux
-#		popd
-#	fi
+	source_git linux ${LINUX_ORIGIN} ${LINUX_BRANCH}
 }
 
 linux_build() {
@@ -30,6 +20,9 @@ linux_build() {
 	cp ${DIR}/rock5b_defconfig arch/arm64/configs/
 	CROSS_COMPILE=${CROSS_COMPILE} ARCH=${ARCH} make rock5b_defconfig
 	CROSS_COMPILE=${CROSS_COMPILE} ARCH=${ARCH} make -j$(($(nproc) + 1))
+	mkdir -p ${BUILD}/boot
+	cp ${LINUX_IMAGE} ${BUILD}/boot/
+	cp ${LINUX_DTB} ${BUILD}/boot/
 	popd
 }
 
