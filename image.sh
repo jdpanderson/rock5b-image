@@ -5,10 +5,24 @@
 source lib/vars.sh
 source lib/linux.sh
 source lib/uboot.sh
+source lib/rkbin.sh
 
-linux_source
-linux_build
-
-uboot_source
-uboot_bin
-uboot_build
+if [ "$1" -eq "source" ]; then
+	linux_source
+	rkbin_source
+	uboot_source
+elif [ "$1" -eq "linux" ]; then
+	linux_source
+	linux_build
+elif [ "$1" -eq "uboot" ]; then
+	rkbin_source
+	uboot_source
+	uboot_build
+else
+	linux_source
+	linux_build
+		
+	rkbin_source
+	uboot_source
+	uboot_build
+fi

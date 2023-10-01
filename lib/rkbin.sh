@@ -1,14 +1,16 @@
 #!/bin/bash -ex
 
-ORIGIN=https://gitlab.collabora.com/hardware-enablement/rockchip-3588/u-boot.git
-BRANCH=2023.10-rc1-rk3588
+#ORIGIN=https://gitlab.collabora.com/hardware-enablement/rockchip-3588/rkbin.git
+ORIGIN=https://github.com/radxa/rkbin.git
+BRANCH=master
 
 CROSS_COMPILE=aarch64-linux-gnu-
 ARCH=arm64
 
 uboot_source() {
-	git_source uboot ${ORIGIN} ${BRANCH}
+	git_source rkbin ${ORIGIN} ${BRANCH}
 #	if [ -d ${BUILD}/uboot ]; then
+#		
 #		return
 #	fi
 #	mkdir -p ${BUILD}

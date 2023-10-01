@@ -12,20 +12,17 @@ CROSS_COMPILE=aarch64-linux-gnu-
 ARCH=arm64
 
 linux_source() {
-	if [ -d ${BUILD}/linux ]; then
-		return
-	fi
-	mkdir -p ${BUILD}
-	pushd ${BUILD}
-	git submodule add --depth 1 --branch ${BRANCH} ${ORIGIN} linux
-	pushd linux
-	#git remote add panthor ${PANTHOR}
-	#git fetch panthor
-	#git checkout -b rock5b-panthor
-	#git reset --hard panthor/${PANTHOR_BRANCH}
-	#git merge v6.5.5
-	popd
-	popd
+	git_source linux ${ORIGIN} ${BRANCH}
+#	if [ -d ${BUILD}/linux ]; then
+#		pushd ${BUILD}/linux
+#		git pull
+#		popd
+#	else
+#		mkdir -p ${BUILD}
+#		pushd ${BUILD}
+#		git checkout --depth 1 --branch ${BRANCH} ${ORIGIN} linux
+#		popd
+#	fi
 }
 
 linux_build() {
