@@ -1,9 +1,12 @@
 #!/bin/bash -ex
 
 #ORIGIN=https://github.com/torvalds/linux.git
-ORIGIN=https://kernel.googlesource.com/pub/scm/linux/kernel/git/stable/linux-stable
-PANTHOR=https://gitlab.freedesktop.org/bbrezillon/linux.git
-PANTHOR_BRANCH=panthor-debug
+#ORIGIN=https://kernel.googlesource.com/pub/scm/linux/kernel/git/stable/linux-stable
+#PANTHOR=https://gitlab.freedesktop.org/bbrezillon/linux.git
+#PANTHOR_BRANCH=panthor-debug
+
+ORIGIN=https://github.com/jdpanderson/linux.git
+BRANCH=rock5b-panthor
 
 CROSS_COMPILE=aarch64-linux-gnu-
 ARCH=arm64
@@ -14,13 +17,13 @@ linux_source() {
 	fi
 	mkdir -p ${BUILD}
 	pushd ${BUILD}
-	git submodule add ${ORIGIN} linux
+	git submodule add --depth 1 --branch ${BRANCH} ${ORIGIN} linux
 	pushd linux
-	git remote add panthor ${PANTHOR}
-	git fetch panthor
-	git checkout -b rock5b-panthor
-	git reset --hard panthor/${PANTHOR_BRANCH}
-	git merge v6.5.5
+	#git remote add panthor ${PANTHOR}
+	#git fetch panthor
+	#git checkout -b rock5b-panthor
+	#git reset --hard panthor/${PANTHOR_BRANCH}
+	#git merge v6.5.5
 	popd
 	popd
 }

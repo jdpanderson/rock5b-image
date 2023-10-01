@@ -1,3 +1,0 @@
-[submodule "build/linux"]
-	path = build/linux
-	url = https://kernel.googlesource.com/pub/scm/linux/kernel/git/stable/linux-stable
