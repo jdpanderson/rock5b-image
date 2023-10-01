@@ -10,6 +10,12 @@ image_source() {
 }
 
 image_build() {
+	image_create
+	image_write
+}
+
+# Create a system.img with partition table and bootloaders, but empty filesystems
+image_create() {
 	BOOT_START=32768
 	ROOT_START=1081344
 	LOADER1_START=64
@@ -21,17 +27,24 @@ image_build() {
 	parted -s ${BUILD}/system.img unit s mkpart boot ${BOOT_START} $(expr ${ROOT_START} - 1)
 	parted -s ${BUILD}/system.img set 1 boot on
 	parted -s ${BUILD}/system.img -- unit s mkpart rootfs ${ROOT_START} -34s
+}
 
+# Write data to system.img filesystems
+image_write() {
 	LOOP=$(sudo losetup -f)
-	sudo losetup ${LOOP} ${BUILD}/system.img
-	sudo partprobe ${LOOP}
+	sudo losetup -P ${LOOP} ${BUILD}/system.img
+	sudo mkfs.vfat ${LOOP}p1
+	sudo mkfs.ext4 ${LOOP}p2
+	UUID=$(sudo blkid -s UUID -o value ${LOOP}p2)
+	mkdir -p ${BUILD}/boot/extlinux
+	sed -e "s/ root=PARTUUID=614e0000-00 / root=PARTUUID=${UUID} /" < extlinux.conf > ${BUILD}/boot/extlinux/extlinux.conf
 	mkdir -p ${BUILD}/root
 	sudo mount ${LOOP}p2 ${BUILD}/root
 	sudo mkdir -p ${BUILD}/root/boot
 	sudo mount ${LOOP}p1 ${BUILD}/root/boot
-	sudo cp ${BUILD}/boot/* ${BUILD}/root/boot/
-	bsdtar -xpf ${BUILD}/rootfs.tar.gz -C ${BUILD}/root
+	sudo cp -r ${BUILD}/boot/* ${BUILD}/root/boot/
 	sudo umount ${BUILD}/root/boot
+	sudo bsdtar -xpf ${BUILD}/rootfs.tar.gz -C ${BUILD}/root
 	sudo umount ${BUILD}/root
 	sudo losetup -d ${LOOP}
 }
