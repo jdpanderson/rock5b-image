@@ -27,5 +27,6 @@ else
 	uboot_source
 	uboot_build
 
+	image_source
 	image_build
 fi

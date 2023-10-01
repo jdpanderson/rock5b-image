@@ -1,15 +1,39 @@
 #!/bin/bash -ex
 
+ROOTFS=http://os.archlinuxarm.org/os/ArchLinuxARM-aarch64-latest.tar.gz
 IMAGE_SIZE=2048
+
+image_source() {
+	if [ ! -f ${BUILD}/rootfs.tar.gz ]; then
+		wget -O ${BUILD}/rootfs.tar.gz ${ROOTFS}
+	fi
+}
 
 image_build() {
 	BOOT_START=32768
 	ROOT_START=1081344
+	LOADER1_START=64
+	LOADER2_START=16384
 	dd if=/dev/zero of=${BUILD}/system.img bs=1M count=${IMAGE_SIZE}
+	dd if=${BUILD}/uboot/idbloader.img of=${BUILD}/system.img seek=${LOADER1_START} conv=notrunc
+	dd if=${BUILD}/uboot/u-boot.itb of=${BUILD}/system.img seek=${LOADER2_START} conv=notrunc
 	parted -s ${BUILD}/system.img mklabel gpt
 	parted -s ${BUILD}/system.img unit s mkpart boot ${BOOT_START} $(expr ${ROOT_START} - 1)
 	parted -s ${BUILD}/system.img set 1 boot on
 	parted -s ${BUILD}/system.img -- unit s mkpart rootfs ${ROOT_START} -34s
+
+	LOOP=$(sudo losetup -f)
+	sudo losetup ${LOOP} ${BUILD}/system.img
+	sudo partprobe ${LOOP}
+	mkdir -p ${BUILD}/root
+	sudo mount ${LOOP}p2 ${BUILD}/root
+	sudo mkdir -p ${BUILD}/root/boot
+	sudo mount ${LOOP}p1 ${BUILD}/root/boot
+	sudo cp ${BUILD}/boot/* ${BUILD}/root/boot/
+	bsdtar -xpf ${BUILD}/rootfs.tar.gz -C ${BUILD}/root
+	sudo umount ${BUILD}/root/boot
+	sudo umount ${BUILD}/root
+	sudo losetup -d ${LOOP}
 }
 
 # Data from raxda build's partitions.sh
